@@ -156,8 +156,16 @@
                 id="emptyMessage"
                 class="empty-message"
             >
-                <h3>Nenhuma tarefa encontrada</h3>
-                <p>Adicione uma nova tarefa para começar.</p>
+                <h3 id="taskFormTitle">Adicionar nova tarefa</h3>
+                <div class="form-actions">
+    <button type="submit" class="btn-primary" id="submitTaskButton">
+        + Adicionar tarefa
+    </button>
+
+    <button type="button" class="btn-cancel" id="cancelEditButton" hidden>
+        Cancelar edição
+    </button>
+</div>
             </div>
 
         </section>
