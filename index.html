@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -27,7 +28,6 @@
         </div>
     </header>
 
-
     <main class="container">
 
         <section class="welcome">
@@ -35,9 +35,7 @@
             <p>Gerencie suas atividades e acompanhe seu progresso.</p>
         </section>
 
-
         <!-- CONTADORES -->
-
         <section class="stats">
 
             <div class="stat-card">
@@ -57,20 +55,15 @@
 
         </section>
 
-
-        <!-- FORMULÁRIO -->
-
+        <!-- FORMULÁRIO DE TAREFAS -->
         <section class="task-form">
 
-            <h3>Adicionar nova tarefa</h3>
+            <h3 id="taskFormTitle">Adicionar nova tarefa</h3>
 
             <form id="taskForm">
 
                 <div class="form-group">
-
-                    <label for="taskTitle">
-                        Tarefa
-                    </label>
+                    <label for="taskTitle">Tarefa</label>
 
                     <input
                         type="text"
@@ -78,75 +71,87 @@
                         placeholder="Ex: Criar página de login"
                         required
                     >
-
                 </div>
-
 
                 <div class="form-group">
-
-                    <label for="taskPriority">
-                        Prioridade
-                    </label>
+                    <label for="taskPriority">Prioridade</label>
 
                     <select id="taskPriority">
-
-                        <option value="baixa">
-                            Baixa
-                        </option>
-
-                        <option value="media" selected>
-                            Média
-                        </option>
-
-                        <option value="alta">
-                            Alta
-                        </option>
-
+                        <option value="baixa">Baixa</option>
+                        <option value="media" selected>Média</option>
+                        <option value="alta">Alta</option>
                     </select>
-
                 </div>
 
+                <!-- NOVO CAMPO: PRAZO -->
+                <div class="form-group">
+                    <label for="taskDueDate">Prazo (opcional)</label>
 
-                <button type="submit" class="btn-primary">
-                    + Adicionar tarefa
-                </button>
+                    <input
+                        type="date"
+                        id="taskDueDate"
+                    >
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        id="submitTaskButton"
+                    >
+                        + Adicionar tarefa
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        id="cancelEditButton"
+                        hidden
+                    >
+                        Cancelar edição
+                    </button>
+
+                </div>
 
             </form>
 
         </section>
 
-
         <!-- FILTROS -->
-
         <section class="filters">
 
             <button
+                type="button"
                 class="filter-btn active"
                 data-filter="todas"
+                aria-pressed="true"
             >
                 Todas
             </button>
 
             <button
+                type="button"
                 class="filter-btn"
                 data-filter="pendentes"
+                aria-pressed="false"
             >
                 Pendentes
             </button>
 
             <button
+                type="button"
                 class="filter-btn"
                 data-filter="concluidas"
+                aria-pressed="false"
             >
                 Concluídas
             </button>
 
         </section>
 
-
         <!-- LISTA DE TAREFAS -->
-
-        <section>
+        <section aria-label="Lista de tarefas">
 
             <div id="taskList" class="task-list">
                 <!-- As tarefas serão inseridas pelo JavaScript -->
@@ -155,33 +160,22 @@
             <div
                 id="emptyMessage"
                 class="empty-message"
+                role="status"
+                aria-live="polite"
             >
-                <h3 id="taskFormTitle">Adicionar nova tarefa</h3>
-                <div class="form-actions">
-    <button type="submit" class="btn-primary" id="submitTaskButton">
-        + Adicionar tarefa
-    </button>
-
-    <button type="button" class="btn-cancel" id="cancelEditButton" hidden>
-        Cancelar edição
-    </button>
-</div>
+                <p>Nenhuma tarefa encontrada. Adicione uma nova tarefa!</p>
             </div>
 
         </section>
 
     </main>
 
-
     <footer>
-
         <p>
             DevTasks © 2026 —
             Projeto desenvolvido para estudos de desenvolvimento web.
         </p>
-
     </footer>
-
 
     <script src="script.js"></script>
 

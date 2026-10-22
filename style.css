@@ -1,3 +1,4 @@
+
 /* =========================
    RESET
 ========================= */
@@ -8,7 +9,6 @@
     box-sizing: border-box;
 }
 
-
 /* =========================
    CONFIGURAÇÕES GERAIS
 ========================= */
@@ -18,6 +18,7 @@ body {
     background: #0f172a;
     color: #e2e8f0;
     min-height: 100vh;
+    line-height: 1.5;
 }
 
 .container {
@@ -26,6 +27,24 @@ body {
     margin: 0 auto;
 }
 
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 3px;
+}
 
 /* =========================
    HEADER
@@ -41,6 +60,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
 }
 
 .header h1 {
@@ -67,7 +87,6 @@ body {
     color: #f8fafc;
 }
 
-
 /* =========================
    WELCOME
 ========================= */
@@ -84,7 +103,6 @@ body {
 .welcome p {
     color: #94a3b8;
 }
-
 
 /* =========================
    ESTATÍSTICAS
@@ -115,7 +133,6 @@ body {
     color: #f8fafc;
 }
 
-
 /* =========================
    FORMULÁRIO
 ========================= */
@@ -130,11 +147,12 @@ body {
 
 .task-form h3 {
     margin-bottom: 20px;
+    color: #f8fafc;
 }
 
 #taskForm {
     display: grid;
-    grid-template-columns: 1fr 200px auto;
+    grid-template-columns: minmax(180px, 1fr) minmax(130px, 180px) minmax(150px, 190px);
     gap: 15px;
     align-items: end;
 }
@@ -143,6 +161,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
 }
 
 .form-group label {
@@ -153,29 +172,39 @@ body {
 input,
 select {
     width: 100%;
+    min-width: 0;
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #475569;
     background: #0f172a;
     color: #f8fafc;
-    outline: none;
 }
 
 input:focus,
 select:focus {
     border-color: #38bdf8;
+    outline: none;
 }
 
+input::placeholder {
+    color: #64748b;
+}
+
+input[type="date"] {
+    color-scheme: dark;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    grid-column: 1 / -1;
+    align-items: center;
+}
 
 /* =========================
    BOTÕES
 ========================= */
-
-button {
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-}
 
 .btn-primary {
     padding: 12px 18px;
@@ -189,6 +218,44 @@ button {
     background: #0369a1;
 }
 
+.btn-cancel {
+    padding: 12px 18px;
+    background: #334155;
+    color: #e2e8f0;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.btn-cancel:hover {
+    background: #475569;
+}
+
+.btn-edit {
+    background: #0c4a6e;
+    color: #bae6fd;
+    padding: 8px 12px;
+    border-radius: 7px;
+}
+
+.btn-edit:hover {
+    background: #075985;
+}
+
+.btn-delete {
+    background: #450a0a;
+    color: #fca5a5;
+    padding: 8px 12px;
+    border-radius: 7px;
+}
+
+.btn-delete:hover {
+    background: #7f1d1d;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
 /* =========================
    FILTROS
@@ -196,6 +263,7 @@ button {
 
 .filters {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
 }
@@ -218,9 +286,8 @@ button {
     border-color: #0284c7;
 }
 
-
 /* =========================
-   TAREFAS
+   LISTA DE TAREFAS
 ========================= */
 
 .task-list {
@@ -233,27 +300,35 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
     background: #1e293b;
     border: 1px solid #334155;
     border-radius: 10px;
     padding: 18px 20px;
+    min-width: 0;
 }
 
 .task-info {
     display: flex;
     align-items: center;
-    gap: 15px;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
 }
 
 .task-checkbox {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
     cursor: pointer;
+    accent-color: #0284c7;
 }
 
 .task-title {
     font-weight: bold;
     color: #f8fafc;
+    overflow-wrap: anywhere;
 }
 
 .task.completed .task-title {
@@ -261,16 +336,21 @@ button {
     color: #64748b;
 }
 
+.task.completed {
+    opacity: 0.8;
+}
 
 /* =========================
    PRIORIDADES
 ========================= */
 
 .priority {
+    display: inline-block;
     padding: 5px 10px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .priority-baixa {
@@ -288,27 +368,54 @@ button {
     color: #fca5a5;
 }
 
+/* =========================
+   PRAZOS
+========================= */
+
+.task-due-date {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 7px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    font-size: 12px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.task-due-date.due-date-today {
+    background: #713f12;
+    border-color: #a16207;
+    color: #fde68a;
+    font-weight: bold;
+}
+
+.task-due-date.due-date-overdue {
+    background: #450a0a;
+    border-color: #991b1b;
+    color: #fca5a5;
+    font-weight: bold;
+}
+
+.task.overdue {
+    border-color: #991b1b;
+}
+
+.task.overdue:not(.completed) {
+    box-shadow: inset 3px 0 0 #ef4444;
+}
 
 /* =========================
-   AÇÕES
+   AÇÕES DAS TAREFAS
 ========================= */
 
 .task-actions {
     display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
     gap: 8px;
 }
-
-.btn-delete {
-    background: #450a0a;
-    color: #fca5a5;
-    padding: 8px 12px;
-    border-radius: 7px;
-}
-
-.btn-delete:hover {
-    background: #7f1d1d;
-}
-
 
 /* =========================
    MENSAGEM VAZIA
@@ -320,11 +427,9 @@ button {
     color: #64748b;
 }
 
-.empty-message h3 {
+.empty-message p {
     color: #94a3b8;
-    margin-bottom: 8px;
 }
-
 
 /* =========================
    FOOTER
@@ -337,12 +442,32 @@ footer {
     font-size: 14px;
 }
 
-
 /* =========================
    RESPONSIVIDADE
 ========================= */
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
+    #taskForm {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-actions {
+        grid-column: 1 / -1;
+    }
+
+    .task {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 92%;
+    }
+
+    .header {
+        padding: 20px 0;
+    }
 
     .header-content {
         flex-direction: column;
@@ -354,42 +479,74 @@ footer {
         text-align: left;
     }
 
+    .welcome {
+        padding: 30px 0 20px;
+    }
+
+    .welcome h2 {
+        font-size: 24px;
+    }
+
     .stats {
         grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 18px;
+    }
+
+    .stat-card strong {
+        font-size: 28px;
+    }
+
+    .task-form {
+        padding: 18px;
     }
 
     #taskForm {
         grid-template-columns: 1fr;
     }
 
-    .task {
-        align-items: flex-start;
-        gap: 15px;
+    .form-actions {
+        grid-column: auto;
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .task-info {
-        flex-wrap: wrap;
+    .form-actions button {
+        width: 100%;
     }
 
-}
+    .filters {
+        gap: 8px;
+    }
 
-
-@media (max-width: 500px) {
-
-    .welcome h2 {
-        font-size: 24px;
+    .filter-btn {
+        flex: 1;
+        padding: 9px 10px;
     }
 
     .task {
         flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+        gap: 15px;
+    }
+
+    .task-info {
+        gap: 10px;
     }
 
     .task-actions {
         width: 100%;
     }
 
-    .btn-delete {
-        width: 100%;
+    .task-actions button {
+        flex: 1;
     }
 
+    footer {
+        padding: 30px 15px;
+    }
 }
