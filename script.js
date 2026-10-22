@@ -7,6 +7,14 @@
 // Lista de tarefas salva no navegador
 let tasks = JSON.parse(localStorage.getItem("devtasks")) || [];
 
+// Compatibilidade com tarefas antigas
+tasks = tasks.map(function(task) {
+    return {
+        ...task,
+        dueDate: task.dueDate || ""
+    };
+});
+
 // Filtro selecionado
 let currentFilter = "todas";
 
@@ -20,6 +28,8 @@ let editingTaskId = null;
 const taskForm = document.getElementById("taskForm");
 const taskTitle = document.getElementById("taskTitle");
 const taskPriority = document.getElementById("taskPriority");
+const taskDueDate = document.getElementById("taskDueDate");
+
 const taskList = document.getElementById("taskList");
 const emptyMessage = document.getElementById("emptyMessage");
 
@@ -42,6 +52,7 @@ taskForm.addEventListener("submit", function(event) {
 
     const title = taskTitle.value.trim();
     const priority = taskPriority.value;
+    const dueDate = taskDueDate.value;
 
     if (title === "") {
         alert("Digite uma tarefa.");
@@ -55,7 +66,8 @@ taskForm.addEventListener("submit", function(event) {
                 return {
                     ...task,
                     title: title,
-                    priority: priority
+                    priority: priority,
+                    dueDate: dueDate
                 };
             }
 
@@ -66,6 +78,7 @@ taskForm.addEventListener("submit", function(event) {
             id: Date.now(),
             title: title,
             priority: priority,
+            dueDate: dueDate,
             completed: false
         };
 
@@ -102,10 +115,16 @@ function startEditingTask(id) {
 
     taskTitle.value = task.title;
     taskPriority.value = task.priority;
+    taskDueDate.value = task.dueDate || "";
 
     taskFormTitle.textContent = "Editar tarefa";
     submitTaskButton.textContent = "Salvar alterações";
     cancelEditButton.hidden = false;
+
+    taskForm.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 
     taskTitle.focus();
 }
@@ -128,6 +147,34 @@ function resetTaskForm() {
 cancelEditButton.addEventListener("click", function() {
     resetTaskForm();
 });
+
+// ==========================================
+// FORMATAR DATA
+// ==========================================
+
+function formatDueDate(dateString) {
+    if (!dateString) {
+        return "";
+    }
+
+    const parts = dateString.split("-");
+    return parts[2] + "/" + parts[1] + "/" + parts[0];
+}
+
+// Verificar se o prazo venceu
+function isTaskOverdue(task) {
+    if (!task.dueDate || task.completed) {
+        return false;
+    }
+
+    const today = new Date();
+    const todayString =
+        today.getFullYear() + "-" +
+        String(today.getMonth() + 1).padStart(2, "0") + "-" +
+        String(today.getDate()).padStart(2, "0");
+
+    return task.dueDate < todayString;
+}
 
 // ==========================================
 // MOSTRAR TAREFAS
@@ -174,6 +221,10 @@ function createTaskElement(task) {
         article.classList.add("completed");
     }
 
+    if (isTaskOverdue(task)) {
+        article.classList.add("overdue");
+    }
+
     const taskInfo = document.createElement("div");
     taskInfo.classList.add("task-info");
 
@@ -181,7 +232,10 @@ function createTaskElement(task) {
     checkbox.type = "checkbox";
     checkbox.classList.add("task-checkbox");
     checkbox.checked = task.completed;
-    checkbox.setAttribute("aria-label", "Concluir tarefa: " + task.title);
+    checkbox.setAttribute(
+        "aria-label",
+        "Concluir tarefa: " + task.title
+    );
 
     checkbox.addEventListener("change", function() {
         toggleTask(task.id);
@@ -197,6 +251,28 @@ function createTaskElement(task) {
 
     taskInfo.append(checkbox, title, priority);
 
+    // Informações do prazo
+    if (task.dueDate) {
+        const dueDateElement = document.createElement("span");
+        dueDateElement.classList.add("task-due-date");
+
+        if (isTaskOverdue(task)) {
+            dueDateElement.classList.add("due-date-overdue");
+            dueDateElement.textContent =
+                "Atrasada • Prazo: " + formatDueDate(task.dueDate);
+        } else if (!task.completed && task.dueDate === getTodayString()) {
+            dueDateElement.classList.add("due-date-today");
+            dueDateElement.textContent =
+                "Vence hoje • " + formatDueDate(task.dueDate);
+        } else {
+            dueDateElement.textContent =
+                "Prazo: " + formatDueDate(task.dueDate);
+        }
+
+        dueDateElement.setAttribute("aria-label", dueDateElement.textContent);
+        taskInfo.appendChild(dueDateElement);
+    }
+
     const actions = document.createElement("div");
     actions.classList.add("task-actions");
 
@@ -204,7 +280,10 @@ function createTaskElement(task) {
     editButton.type = "button";
     editButton.classList.add("btn-edit");
     editButton.textContent = "Editar";
-    editButton.setAttribute("aria-label", "Editar tarefa: " + task.title);
+    editButton.setAttribute(
+        "aria-label",
+        "Editar tarefa: " + task.title
+    );
 
     editButton.addEventListener("click", function() {
         startEditingTask(task.id);
@@ -214,7 +293,10 @@ function createTaskElement(task) {
     deleteButton.type = "button";
     deleteButton.classList.add("btn-delete");
     deleteButton.textContent = "Excluir";
-    deleteButton.setAttribute("aria-label", "Excluir tarefa: " + task.title);
+    deleteButton.setAttribute(
+        "aria-label",
+        "Excluir tarefa: " + task.title
+    );
 
     deleteButton.addEventListener("click", function() {
         deleteTask(task.id);
@@ -224,6 +306,18 @@ function createTaskElement(task) {
     article.append(taskInfo, actions);
 
     return article;
+}
+
+// ==========================================
+// DATA ATUAL
+// ==========================================
+
+function getTodayString() {
+    const today = new Date();
+
+    return today.getFullYear() + "-" +
+        String(today.getMonth() + 1).padStart(2, "0") + "-" +
+        String(today.getDate()).padStart(2, "0");
 }
 
 // ==========================================
@@ -321,9 +415,12 @@ filterButtons.forEach(function(button) {
 
         filterButtons.forEach(function(item) {
             item.classList.remove("active");
+            item.setAttribute("aria-pressed", "false");
         });
 
         button.classList.add("active");
+        button.setAttribute("aria-pressed", "true");
+
         renderTasks();
     });
 });
